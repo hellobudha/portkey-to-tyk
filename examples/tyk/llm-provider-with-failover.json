@@ -1,0 +1,23 @@
+{
+  "data": {
+    "type": "llms",
+    "attributes": {
+      "name": "Anthropic Prod",
+      "short_description": "Claude, under the Anthropic data processing agreement",
+      "vendor": "anthropic",
+      "api_endpoint": "https://api.anthropic.com/v1",
+      "api_key": "$SECRET/ANTHROPIC_KEY",
+      "default_model": "claude-sonnet-5-5",
+      "allowed_models": ["^claude-.*$"],
+      "privacy_score": 75,
+      "active": true,
+      "failover": {
+        "targets": [
+          { "llm_id": "<id of OpenAI Prod>", "model": "gpt-5" },
+          { "llm_id": "<id of Bedrock EU>", "model": "anthropic.claude-sonnet-5-5-v1:0" }
+        ],
+        "triggers": { "status_codes": [429, 500, 502, 503], "on_timeout": true, "on_connection_error": true, "timeout_seconds": 30 }
+      }
+    }
+  }
+}

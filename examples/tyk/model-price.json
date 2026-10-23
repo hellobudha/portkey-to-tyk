@@ -1,0 +1,14 @@
+{
+  "data": {
+    "type": "model-prices",
+    "attributes": {
+      "model_name": "claude-sonnet-5-5",
+      "vendor": "anthropic",
+      "cpit": 0.000002,
+      "cpt": 0.00001,
+      "cache_write_pt": 0.0000025,
+      "cache_read_pt": 0.0000002,
+      "currency": "USD"
+    }
+  }
+}

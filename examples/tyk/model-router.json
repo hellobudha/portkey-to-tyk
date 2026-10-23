@@ -1,0 +1,22 @@
+{
+  "data": {
+    "type": "model-routers",
+    "attributes": {
+      "name": "Compass Router",
+      "slug": "compass",
+      "active": true,
+      "pools": [
+        {
+          "name": "compass-chat",
+          "model_pattern": "compass-*",
+          "selection_algorithm": "weighted",
+          "priority": 10,
+          "vendors": [
+            { "llm_id": "<id of Anthropic Prod>", "weight": 7, "active": true, "mappings": [{ "source_model": "compass-chat", "target_model": "claude-sonnet-5-5" }] },
+            { "llm_id": "<id of OpenAI Prod>", "weight": 3, "active": true, "mappings": [{ "source_model": "compass-chat", "target_model": "gpt-5" }] }
+          ]
+        }
+      ]
+    }
+  }
+}

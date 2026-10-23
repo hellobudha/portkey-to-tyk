@@ -25,6 +25,27 @@ A practical migration guide for platform teams moving LLM traffic, governance an
 
 Appendix A lists the sources, Appendix B is a worked example (a fictional bank's assistant moving from one Portkey Config to Tyk objects), and Appendix C is the log of live checks on v2.2.2.
 
+## What else is here
+
+```
+MIGRATION-FROM-PORTKEY.md        the guide
+scripts/export-portkey.sh        export workspaces, keys, integrations, configs, prompts, guardrails and usage policies through the Portkey Admin API
+scripts/translate-config.py      turn one Portkey Config into the Tyk objects it implies (providers, failover, Model Router, cache, filters, and what cannot be translated), optionally as JSON:API payloads
+scripts/verify-tyk.sh            post-migration checks against a Tyk edge gateway (models, grants, streaming, failover, router, embeddings, metrics, guardrail block)
+examples/                        sample Portkey Configs, Tyk management API payloads and two Tengo filters (see examples/README.md)
+docs/positioning.md              the case for Tyk against Portkey, with and without the wider Tyk platform
+```
+
+Typical use:
+
+```bash
+PORTKEY_ADMIN_KEY=... ./scripts/export-portkey.sh portkey-export
+./scripts/translate-config.py portkey-export/configs/<slug>.json --payloads tyk-payloads/
+TYK_APP_SECRET=... ./scripts/verify-tyk.sh --gateway https://<edge> --model <slug>/<model> --metrics
+```
+
+The scripts need bash 3.2 or later, curl, jq and Python 3.8 or later; nothing is installed.
+
 ## How claims are tagged
 
 | Tag | Meaning |

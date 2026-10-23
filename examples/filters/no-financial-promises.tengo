@@ -1,0 +1,26 @@
+// Response filter (from the Larkspur Bank workshop): the assistant must never promise outcomes or give guaranteed-return
+// style investment advice (handbook section 7). Tick "Is this a Response Filter?" when you create it.
+// Works for streaming and non-streaming responses.
+text := import("text")
+
+response_text := input.is_chunk ? input.current_buffer : input.raw_input
+
+output := {
+    block: false,
+    message: ""
+}
+
+if !input.is_chunk || len(response_text) >= 80 {
+    forbidden := ["guaranteed return", "guaranteed to", "risk-free", "cannot lose", "can't lose", "will be approved", "will definitely be refunded", "i guarantee", "definitely fraud"]
+    should_block := false
+    for pattern in forbidden {
+        if text.contains(text.to_lower(response_text), pattern) {
+            should_block = true
+            break
+        }
+    }
+    output = {
+        block: should_block,
+        message: should_block ? "Response blocked: Compass may not promise outcomes or give guaranteed-return advice (handbook section 7)" : ""
+    }
+}

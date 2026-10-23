@@ -1,0 +1,43 @@
+// Request filter (from the Larkspur Bank workshop): stop card numbers and Social Security numbers from ever reaching a
+// vendor; redact email addresses and phone numbers; record a compliance event either way.
+// Attach it to the Anthropic provider (and the chat experience) as a request filter.
+text := import("text")
+tyk := import("tyk")
+
+// 13-16 digit card numbers, with optional spaces or dashes between digits, and US SSNs.
+card_pattern := "\\b(\\d[ -]?){12,15}\\d\\b"
+ssn_pattern := "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+
+// Declare the result once at top level: a ":=" inside an if-block would create a block-local
+// variable and the runtime would never see it.
+output := { block: false, payload: "", message: "", compliance_events: [] }
+
+found := ""
+for msg in input.messages {
+    if msg.role != "user" { continue }
+    if text.re_match(card_pattern, msg.content) { found = "card_number"; break }
+    if text.re_match(ssn_pattern, msg.content) { found = "ssn"; break }
+}
+
+if found != "" {
+    output = {
+        block: true,
+        payload: "",
+        message: "Blocked by Larkspur PII shield: a " + found + " must never be sent to an AI vendor (handbook section 1)",
+        compliance_events: [
+            { event_type: "policy_violation", severity: "critical", description: "Sensitive identifier in prompt", metadata: { "matched_pattern": found, "policy": "handbook-1" } }
+        ]
+    }
+} else {
+    // One pass, one replacement token: email addresses OR phone numbers.
+    pii_pattern := "([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})|(\\(?\\d{3}\\)?[ .-]?\\d{3}[ .-]?\\d{4})"
+    modified_payload := tyk.redact_pattern(input, pii_pattern, "[REDACTED]")
+    output = {
+        block: false,
+        payload: modified_payload,
+        message: "Contact details redacted",
+        compliance_events: [
+            { event_type: "pii_redacted", severity: "warning", description: "Email addresses and phone numbers redacted before the vendor", metadata: { "redacted_types": ["email", "phone"] } }
+        ]
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "strategy": {
+    "mode": "conditional",
+    "conditions": [
+      { "query": { "metadata.team": { "$eq": "wealth" } }, "then": "wealth-route" },
+      { "query": { "params.model": { "$regex": "^gpt" } }, "then": "openai-route" }
+    ],
+    "default": "general-route"
+  },
+  "targets": [
+    { "name": "wealth-route", "provider": "@anthropic-prod", "override_params": { "model": "claude-opus-5-5" } },
+    { "name": "openai-route", "provider": "@openai-prod" },
+    { "name": "general-route", "provider": "@anthropic-prod", "override_params": { "model": "claude-haiku-5-5" } }
+  ]
+}

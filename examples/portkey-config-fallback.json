@@ -1,0 +1,9 @@
+{
+  "strategy": { "mode": "fallback", "on_status_codes": [429, 500, 502, 503, 504] },
+  "request_timeout": 20000,
+  "targets": [
+    { "provider": "@anthropic-prod", "override_params": { "model": "claude-sonnet-5-5" } },
+    { "provider": "@openai-prod", "override_params": { "model": "gpt-5" } }
+  ],
+  "cb_config": { "failure_threshold": 5, "cooldown_interval": 60000 }
+}

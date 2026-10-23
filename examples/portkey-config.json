@@ -1,0 +1,17 @@
+{
+  "retry": { "attempts": 3, "on_status_codes": [429, 503], "use_retry_after_headers": true },
+  "cache": { "mode": "simple", "max_age": 3600 },
+  "request_timeout": 30000,
+  "strategy": { "mode": "loadbalance" },
+  "targets": [
+    { "provider": "@anthropic-prod", "weight": 0.7, "override_params": { "model": "claude-sonnet-5-5" } },
+    { "weight": 0.3,
+      "strategy": { "mode": "fallback", "on_status_codes": [429, 500, 502, 503] },
+      "targets": [
+        { "provider": "@openai-prod", "override_params": { "model": "gpt-5" } },
+        { "provider": "@bedrock-eu",  "override_params": { "model": "anthropic.claude-sonnet-5-5-v1:0" } }
+      ] }
+  ],
+  "input_guardrails": ["gr-pii-check"],
+  "output_guardrails": [{ "id": "gr-no-promises", "deny": true }]
+}

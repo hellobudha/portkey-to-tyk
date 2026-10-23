@@ -1,0 +1,13 @@
+{
+  "data": {
+    "type": "apps",
+    "attributes": {
+      "name": "Compass Backend",
+      "description": "Contact centre assistant backend",
+      "llm_ids": ["<provider ids>"],
+      "model_router_ids": ["<router ids>"],
+      "user_id": 1,
+      "monthly_budget": 500
+    }
+  }
+}

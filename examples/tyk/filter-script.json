@@ -1,0 +1,12 @@
+{
+  "data": {
+    "type": "filters",
+    "attributes": {
+      "name": "PII shield",
+      "description": "Block card numbers and SSNs, redact email addresses and phone numbers",
+      "kind": "script",
+      "response_filter": false,
+      "script": "<base64 of examples/filters/pii-shield.tengo>"
+    }
+  }
+}
